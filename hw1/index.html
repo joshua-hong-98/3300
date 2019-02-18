@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+  <title> 3300 Hw1 </title>
+  <meta charset="utf-8"/>
+</head>
+<body>
+
+<h2>3300 HW1</h2>
+
+<p>
+Name: Joshua Hong <br>
+NetID: jh976 <br>
+Date: 2/4/2019
+</p>
+
+<p id="p1">
+  a) Marks: cities <br>
+  Channels:color, hue
+  <br>
+  b) Marks: dots <br>
+  Channels:color, position in relation to axis
+<script>
+</script>
+</p>
+
+<p id="p2">
+  a) Not Valid <br>
+  b) Valid <br>
+  c) Not Valid <br>
+  d) Not Valid <br>
+  e) Not Valid <br>
+  f) Valid <br>
+  g) Valid <br>
+  h) Not Valid <br>
+  i) Valid <br>
+  j) Not Valid <br>
+  k) Not Valid <br>
+  l) Valid <br>
+<script>
+// b) string
+console.log(typeof "hello");
+// f) object
+console.log(typeof new Number(12));
+// g) number
+console.log(typeof 12);
+// i) boolean
+console.log(typeof true);
+// l) function
+console.log(typeof function(){});
+</script>
+</p>
+
+
+<p id="p3">
+  a) the 'netid' needs to be a string<br>
+  b) the '/*choose one of these options */' needs to become a string with number<br>
+  c) the JSON string provided used semicolons instead of commas and it was a list that needs to be a string<br>
+  d) the 'number' for 1100 used semicolons instead of colons and the JSON provided is a list that needs to be string<br>
+<script>
+// a)
+console.log(JSON.parse('{ "netid": "jmr395" }'));
+// b)
+console.log(JSON.parse('{ "/* choose one of these options */ number": "INFO3300/CS3300/INFO5100" }'));
+// c)
+let obj = '[3,4.3,null]';
+console.log(JSON.parse(obj));
+// d)
+let obj1= '[{"name": "DDWA", "number": 3300 },{"name": "Java", "number": 2110},{"name": "Python", "number": 1110}]';
+console.log(JSON.parse(obj1));
+</script>
+</p>
+
+<p id="p4">
+<script>
+let list = '[{"number": 12, "bool": true, "stringlist": ["string1", "string2"]}, {"number": 3300, "bool": true, "stringlist": ["string3", "string4"]}, {"number": 42, "bool": false, "stringlist": ["string5", "string6"]}]'
+console.log(JSON.parse(list));
+</script>
+</p>
+
+<p id="p5">
+  No late work will be accepted. If a student does not submit a file or submits the file containing the wrong work,
+  the student will be penalized with a 0 for that assignment. However, a student does get two 'homework passes,'
+  where they are allowed two missed assignments. An attempt will be made to open any submitted files, and under rare
+  circumstances, a earlier or more previous version of the submission will be accepted if able to verify with a
+  non-controllable time stamp or something that can indicate that the work was done before the due date. Finally,
+  in the case that CMS is not working for a student, they are allowed to turn the assignment in via email.
+<script>
+</script>
+</p>
+
+
+</body>

@@ -1,87 +1,195 @@
 <!DOCTYPE html>
 <html lang = 'en'>
 <head>
-  <title> 3300 Hw1 </title>
+  <title> 3300 Hw2 </title>
   <meta charset="utf-8"/>
 </head>
 <body>
 
-<h2>3300 HW1</h2>
+<h2>3300 HW2</h2>
 
+<p>
+Name: Joshua Hong <br>
+NetID: jh976 <br>
+Date: 2/11/2019
+</p>
+
+<p>#1.
+</p>
 <p id="p1">
-  a) Marks: cities <br>
-  Channels:color, hue
-  <br>
-  b) Marks: dots <br>
-  Channels:color, position in relation to axis
-<script>
-</script>
+  <svg height="200" width="200">
+    <circle cx="100" cy="100" r="10" fill="pink" />
+    <defs>
+      <filter id="drop" x="0" y="0" width="200%" height="200%">
+        <feOffset result="offOut" in="SourceAlpha" dx="10" dy="10" />
+        <feGaussianBlur result="blurOut" in="offsetresult" stdDeviation="2" />
+        <feBlend in="SourceGraphic" in2="blurresult" mode="normal" />
+      </filter>
+    </defs>
+  <text x="65" y="100" fill="darkblue" filter="url(#drop)" font-family="palatino">INFO3300!</text>
+</svg>
 </p>
 
+<p>#2.
+</p>
 <p id="p2">
-  a) Not Valid <br>
-  b) Valid <br>
-  c) Not Valid <br>
-  d) Not Valid <br>
-  e) Not Valid <br>
-  f) Valid <br>
-  g) Valid <br>
-  h) Not Valid <br>
-  i) Valid <br>
-  j) Not Valid <br>
-  k) Not Valid <br>
-  l) Valid <br>
-<script>
-// b) string
-console.log(typeof "hello");
-// f) object
-console.log(typeof new Number(12));
-// g) number
-console.log(typeof 12);
-// i) boolean
-console.log(typeof true);
-// l) function
-console.log(typeof function(){});
-</script>
+  <svg width="300" height="200">
+  <g id="xline">
+  <line x1="15" x2="300" y1="190" y2="190" stroke="black"></line>
+  <line x1="15" x2="300" y1="172" y2="172" stroke="black"></line>
+  <line x1="15" x2="300" y1="154" y2="154" stroke="black"></line>
+  <line x1="15" x2="300" y1="136" y2="136" stroke="black"></line>
+  <line x1="15" x2="300" y1="118" y2="118" stroke="black"></line>
+  <line x1="15" x2="300" y1="100" y2="100" stroke="black"></line>
+  <line x1="15" x2="300" y1="82" y2="82" stroke="black"></line>
+  <line x1="15" x2="300" y1="64" y2="64" stroke="black"></line>
+  <line x1="15" x2="300" y1="46" y2="46" stroke="black"></line>
+  <line x1="15" x2="300" y1="28" y2="28" stroke="black"></line>
+  <line x1="15" x2="300" y1="10" y2="10" stroke="black"></line>
+
+</g>
+<g id="yline">
+  <line x1="15" x2="15" y1="0" y2="190" stroke="black"></line>
+  <line x1="33" x2="33" y1="0" y2="190" stroke="black"></line>
+  <line x1="51" x2="51" y1="0" y2="190" stroke="black"></line>
+  <line x1="69" x2="69" y1="0" y2="190" stroke="black"></line>
+  <line x1="87" x2="87" y1="0" y2="190" stroke="black"></line>
+  <line x1="105" x2="105" y1="0" y2="190" stroke="black"></line>
+  <line x1="123" x2="123" y1="0" y2="190" stroke="black"></line>
+  <line x1="141" x2="141" y1="0" y2="190" stroke="black"></line>
+  <line x1="159" x2="159" y1="0" y2="190" stroke="black"></line>
+  <line x1="177" x2="177" y1="0" y2="190" stroke="black"></line>
+  <line x1="195" x2="195" y1="0" y2="190" stroke="black"></line>
+  <line x1="213" x2="213" y1="0" y2="190" stroke="black"></line>
+  <line x1="231" x2="231" y1="0" y2="190" stroke="black"></line>
+  <line x1="249" x2="249" y1="0" y2="190" stroke="black"></line>
+  <line x1="267" x2="267" y1="0" y2="190" stroke="black"></line>
+  <line x1="285" x2="285" y1="0" y2="190" stroke="black"></line>
+
+</g>
+  <g id="x-axis">
+  <text x="275" y="200">15</text>
+  <text x="185" y="200">10</text>
+  <text x="100" y="200">5</text>
+  <text x="10" y="200">0</text>
+</g>
+<g id="y-axis">
+  <text x="0" y="15">10</text>
+  <text x="0" y="105">5</text>
+  <text x="0" y="195">0</text>
+</g>
+<g id="data">
+  <circle cx="87" cy="134.2" r="3"></circle>
+  <!-- original (x,y) = (4,3.1)  -->
+  <circle cx="105" cy="104.68" r="3"></circle>
+  <!-- original (x,y) = (5,4.74) -->
+  <circle cx="123" cy="79.66" r="3"></circle>
+  <!-- original (x,y) = (6,6.13) -->
+  <circle cx="141" cy="59.32" r="3"></circle>
+  <!-- original (x,y) = (7,7.26) -->
+  <circle cx="159" cy="43.48" r="3"></circle>
+  <!-- original (x,y) = (8,8.14) -->
+  <circle cx="177" cy="32.14" r="3"></circle>
+  <!-- original (x,y) = (9,8.77) -->
+  <circle cx="195" cy="25.48" r="3"></circle>
+  <!-- original (x,y) = (10,9.14) -->
+  <circle cx="213" cy="23.32" r="3"></circle>
+  <!-- original (x,y) = (11,9.26) -->
+  <circle cx="231" cy="25.66" r="3"></circle>
+  <!-- original (x,y) = (12,9.13) -->
+  <circle cx="249" cy="32.68" r="3"></circle>
+  <!-- original (x,y) = (13,8.74) -->
+  <circle cx="267" cy="44.2" r="3"></circle>
+  <!-- original (x,y) = (14,8.1) -->
+  <circle cx="285" cy="190" r="3"></circle>
+  <!-- original (x,y) = (15,10) -->
+</g>
+</svg>
 </p>
 
-
+<p>#3.
+</p>
 <p id="p3">
-  a) the 'netid' needs to be a string<br>
-  b) the '/*choose one of these options */' needs to become a string with number<br>
-  c) the JSON string provided used semicolons instead of commas and it was a list that needs to be a string<br>
-  d) the 'number' for 1100 used semicolons instead of colons and the JSON provided is a list that needs to be string<br>
-<script>
-// a)
-console.log(JSON.parse('{ "netid": "jmr395" }'));
-// b)
-console.log(JSON.parse('{ "/* choose one of these options */ number": "INFO3300/CS3300/INFO5100" }'));
-// c)
-let obj = '[3,4.3,null]';
-console.log(JSON.parse(obj));
-// d)
-let obj1= '[{"name": "DDWA", "number": 3300 },{"name": "Java", "number": 2110},{"name": "Python", "number": 1110}]';
-console.log(JSON.parse(obj1));
-</script>
+  <svg height="200" width="200">
+    <!-- lines -->
+    <line x1="10" x2="10" y1="0" y2="200" stroke="black"></line>
+    <line x1="15" x2="15" y1="0" y2="200" stroke="black"></line>
+    <line x1="0" x2="200" y1="150" y2="150" stroke="black" stroke-width="3px"></line>
+    <line x1="0" x2="150" y1="135" y2="135" stroke="black" stroke-width="3px"></line>
+    <line x1="150" x2="150" y1="0" y2="200" stroke="black" stroke-width="3px"></line>
+    <line x1="20" x2="20" y1="0" y2="200" stroke="black"></line>
+    <line x1="30" x2="30" y1="0" y2="200" stroke="black"></line>
+    <line x1="30" x2="150" y1="100" y2="100" stroke="black" stroke-width="5px"></line>
+    <!-- rectangles -->
+    <rect x="10" y="0" height="134" width="5" fill="red" />
+    <rect x="151.5" y="0" height="148.5" width="50" fill="blue" />
+    <rect x="30.5" y="103" height="30" width="118" fill="yellow" />
+  </svg>
 </p>
 
+<p>#4.
+</p>
 <p id="p4">
-<script>
-let list = '[{"number": 12, "bool": true, "stringlist": ["string1", "string2"]}, {"number": 3300, "bool": true, "stringlist": ["string3", "string4"]}, {"number": 42, "bool": false, "stringlist": ["string5", "string6"]}]'
-console.log(JSON.parse(list));
-</script>
+  value: frequency<br>
+  0: 1<br>
+  1: 1<br>
+  2: 1<br>
+  3: 1<br>
+  5: 3<br>
+  6: 2<br>
+  7: 2<br>
+  8: 1<br>
+  10: 2<br>
+  14: 1<br>
+  15: 1<br>
+  mean:6.5(red);
+  median:6(blue);
+  mode:5(purple);
+  standard-deviation:4.09<br>
+
+<svg height= "600px" width= "600px">
+  <g>
+  <line x1="50" x2="540" y1="300" y2="300" stroke="black"></line>
+  <line x1="50" x2="50" y1="50" y2="320" stroke="black"></line>
+
+  <g>
+  <text x="60" y="320">0</text>
+  <text x="90" y="320">1</text>
+  <text x="120" y="320">2</text>
+  <text x="150" y="320">3</text>
+  <text x="180" y="320"></text>
+  <text x="210" y="320">5</text>
+  <text x="240" y="320">6</text>
+  <text x="270" y="320">7</text>
+  <text x="300" y="320">8</text>
+  <text x="330" y="320"></text>
+  <text x="360" y="320">10</text>
+  <text x="390" y="320"></text>
+  <text x="420" y="320"></text>
+  <text x="450" y="320"></text>
+  <text x="480" y="320">14</text>
+  <text x="510" y="320">15</text>
+  <text x="35" y="250">1</text>
+  <text x="35" y="180">2</text>
+  <text x="35" y="110">3</text>
+</g>
+<rect x="59" y="250" height="50" width="10" fill="black" />
+<rect x="89" y="250" height="50" width="10" fill="black" />
+<rect x="119" y="250" height="50" width="10" fill="black" />
+<rect x="149" y="250" height="50" width="10" fill="black" />
+<rect x="210" y="110" height="190" width="10" fill="black" />
+<rect x="240" y="180" height="120" width="10" fill="black" />
+<rect x="270" y="180" height="120" width="10" fill="black" />
+<rect x="300" y="250" height="50" width="10" fill="black" />
+<rect x="360" y="180" height="120" width="10" fill="black" />
+<rect x="480" y="250" height="50" width="10" fill="black" />
+<rect x="510" y="250" height="50" width="10" fill="black" />
+
+<line x1="245" x2="245" y1="0" y2="300" stroke="blue" stroke-width= "2px"></line>
+<line x1="215" x2="215" y1="0" y2="300" stroke="purple" stroke-width= "2px"></line>
+<line x1="260" x2="260" y1="0" y2="300" stroke="red" stroke-width= "2px"></line>
+<rect x="135" y="0" height="300" width="250" fill="beige" opacity=.5 />
+
+</g>
+</svg>
 </p>
-
-<p id="p5">
-  No late work will be accepted. If a student does not submit a file or submits the file containing the wrong work,
-  the student will be penalized with a 0 for that assignment. However, a student does get two 'homework passes,'
-  where they are allowed two missed assignments. An attempt will be made to open any submitted files, and under rare
-  circumstances, a earlier or more previous version of the submission will be accepted if able to verify with a
-  non-controllable time stamp or something that can indicate that the work was done before the due date. Finally,
-  in the case that CMS is not working for a student, they are allowed to turn the assignment in via email.
-<script>
-</script>
-</p>
-
-
-</body>
