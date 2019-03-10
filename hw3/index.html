@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+  <title> 3300 Hw3 </title>
+  <meta charset="utf-8"/>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+
+<h2>3300 HW3</h2>
+
+<p>
+Name: Joshua Hong <br>
+NetID: jh976 <br>
+Date: 2/18/2019
+</p>
+
+<p>#1.
+</p>
+<ul>
+  <li>A: sequential, and this is an effective color scale because the intensity of the color
+  could be used to coordinate higher to lower numbers, and the use of 1 color hue makes it effective. </li>
+  <li>B: this is not an effective color scale because the change in colors is not intuitive, since most people would
+  expect red to yellow to blue, therefore confusion could arise even with proper labeling.</li>
+  <li>C: Red-Weak/Protanomaly, Green-Weak/Deuteranomaly, Red-Blind/Protanopia, Green-Blind/Deuteranopia, Monochromacy/Achromatopsia, Blue Cone Monochromacy.</li>
+  <li>D: There are clear and different colors for differntiating the ends, but without labels it will be hard to differentiate
+  some colors, espeically in the middle where many of the colors seem very similar to each other. Therefore, I do not
+  recommend this rainbow scale for use. </li>
+</ul>
+
+<p>#2.
+</p>
+<svg id="scatterplot" height="300px" width="400px"></svg>
+<script>
+let svg = d3.select("#scatterplot");
+let points= [[10, 9.14], [8, 8.14], [13, 8.74], [9, 8.77], [11, 9.26], [14, 8.1], [6, 6.13], [4, 3.1], [12, 9.13], [7, 7.26], [5, 4.74]];
+let margin = { "top": 10, "right": 10, "bottom": 10, "left":20};
+
+
+x_scale= d3.scaleLinear().domain([1, 15]).range([0,300]);;
+y_scale= d3.scaleLinear().domain([0, 10]).range([200, 0]);
+
+// from lecture
+let y_axis = d3.axisLeft(y_scale);
+  svg.append("g")
+  .attr("transform","translate("+(margin.left)+","+margin.top+")")
+  .call(y_axis);
+let x_axis = d3.axisBottom(x_scale)
+  svg.append("g")
+  .attr("transform","translate("+margin.left+","+(margin.top+200)+")")
+  .call(x_axis);
+
+let y_grid = d3.axisLeft(y_scale).tickSize(-300).tickFormat("");
+  svg.append("g")
+  .attr("transform","translate("+margin.left+","+(margin.top)+")")
+  .call(y_grid);
+
+let x_grid = d3.axisBottom(x_scale).tickSize(-200).tickFormat("");
+    svg.append("g")
+    .attr("transform","translate("+margin.left+","+(margin.top+200)+")")
+    .call(x_grid);
+
+
+points.forEach(function(data,i){
+      svg.append("circle")
+      .attr("r",4)
+      .attr("cx",x_scale(points[i][0]))
+      .attr("cy",y_scale(points[i][1]))
+      .attr("transform","translate("+(margin.left)+","+margin.top+")")
+      .style("fill", "blue")
+      .on("click",function(){
+        d3.select(this).style("fill","red")
+      })
+    });
+</script>
+
+
+<p>#3.
+</p>
+<div id="p3"></div>
+<div id="p3_1"></div>
+<div id="p3_2"></div>
+<script>
+let svg_q3 = d3.select("#p3").append("svg").attr("width", 400).attr("height", 400).style("border", "1px solid #ccc");
+let svg_q3_1 = d3.select("#p3_1").append("svg").attr("width", 400).attr("height", 400).style("border", "1px solid #ccc");
+let svg_q3_2 = d3.select("#p3_2").append("svg").attr("width", 400).attr("height", 400).style("border", "1px solid #ccc");
+
+var diamondsData;
+d3.json("./diamonds.json").then(function(diamondsData) {
+  console.log(diamondsData)
+
+  var price = []
+  var carat = []
+  diamondsData.forEach( (d, i) => {
+  price.push(d['price']);
+  carat.push(d['carat']);
+  });
+
+  let maxprice = d3.max(d3.values(price));
+  let maxcarat = d3.max(d3.values(carat));
+
+  carat_scale= d3.scaleLinear().domain([0,maxcarat]).range([0,395]);
+  price_scale= d3.scaleLinear().domain([0,maxprice]).range([400,5]);
+
+  for(var i = 0; i < maxprice; i=i+1000) {
+    svg_q3.append("line")
+      .attr("x1", 0)
+      .attr("y1",price_scale(i))
+      .attr("x2", 400)
+      .attr("y2",price_scale(i))
+      .style("stroke", "lightgrey")
+  }
+  for(var i=0; i< maxcarat; i++) {
+      svg_q3.append("svg:line")
+      .attr("x1", carat_scale(i))
+      .attr("y1", 0)
+      .attr("x2", carat_scale(i))
+      .attr("y2", 400)
+      .style("stroke", "lightgrey")
+  };
+
+  diamondsData.forEach(function(d,i) {
+    svg_q3.append("circle")
+      .attr("r",3)
+      .attr("cx", Math.floor(carat_scale(d['carat'])))
+      .attr("cy", Math.floor(price_scale(d['price'])))
+      .attr("opacity",0.4)
+      .style("fill", "darkblue")
+  });
+
+  var color = []
+  diamondsData.forEach( (d, i) => {
+  color.push(d['color_rating']);
+  });
+
+  let maxcolor = d3.max(d3.values(color));
+
+  color_scale= d3.scaleLinear().domain([0,8]).range([0,400]);
+
+  for(var i = 0; i < maxprice; i=i+1000) {
+    svg_q3_1.append("line")
+      .attr("x1", 0)
+      .attr("y1",price_scale(i))
+      .attr("x2", 400)
+      .attr("y2",price_scale(i))
+      .style("stroke", "lightgrey")
+  }
+
+  for(var i = 0; i < 8; i++) {
+    svg_q3_1.append("line")
+      .attr("x1", color_scale(i))
+      .attr("y1",0)
+      .attr("x2", color_scale(i))
+      .attr("y2",400)
+      .style("stroke", "lightgrey")
+  }
+
+  diamondsData.forEach(function(d,i) {
+    svg_q3_1.append("circle")
+      .attr("r",3)
+      .attr("cx", Math.floor(color_scale(d['color_rating'])+(Math.random()-5)))
+      .attr("cy", Math.floor(price_scale(d['price'])))
+      .attr("opacity",0.3)
+      .style("fill", "darkgreen")
+
+
+  });
+
+  ppc_scale= d3.scaleLinear().domain([0,(maxprice/maxcarat)]).range([400,0]);
+
+  for(var i = 0; i < 8; i++) {
+    svg_q3_2.append("line")
+      .attr("x1", color_scale(i))
+      .attr("y1",0)
+      .attr("x2", color_scale(i))
+      .attr("y2",400)
+      .style("stroke", "lightgrey")
+  }
+
+  for(var i=0; i< maxprice/maxcarat; i=i+1000) {
+      svg_q3_2.append("line")
+      .attr("x1", 0)
+      .attr("y1", ppc_scale(i))
+      .attr("x2", 400)
+      .attr("y2", ppc_scale(i))
+      .style("stroke", "lightgrey")
+  };
+
+  diamondsData.forEach(function(d,i) {
+    svg_q3_2.append("circle")
+      .attr("r",3)
+      .attr("cx", Math.floor(color_scale(d['color_rating'])+ (Math.random()-5)))
+      .attr("cy", Math.floor(ppc_scale(d['price']/d['carat'])))
+      .attr("opacity",0.3)
+      .style("fill", "darkred")
+  });
+
+
+}).catch(function(error){
+  console.log(error.message);
+});
+
+</script>
+</body>

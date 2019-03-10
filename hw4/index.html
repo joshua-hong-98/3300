@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+  <title> 3300 Hw4 </title>
+  <meta charset="utf-8"/>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+
+<h2>3300 HW4</h2>
+
+<p>
+Name: Joshua Hong <br>
+NetID: jh976 <br>
+Date: 2/27/2019
+</p>
+
+<p>#1.
+</p>
+<p id =A1> A. Some data issues that I found were missing values in many of the arrays in blockbusters,
+  however, I made the filter for Main_Genre because it seemed that out of all of the values we needed for
+   graphing that genre had the most values missing.<p>
+<p id =B1> B. I made the y-axis(gross) scaled to log because of the large numbers, and I scaled the x-axis(year)
+  linearly because time increases linearly. I made the axises light grey for easier visualization. <p>
+<p id =D1> D. When there are movies that have similar grosses released around the same time, it is
+  sometimes hard to see each and every point clearly and it is even harder to see sometimes when the
+  text is so visible, as it could cover some of the data points. Also when there are data points that somewhat
+  overlap it is hard to select them. <p>
+
+<svg id="p1" height="500px" width="800px"></svg>
+<!-- use in firefox -->
+<script>
+var blockbustersData = {
+  'year':[],
+  'gross':[],
+  'imdb':[],
+  'genre':[],
+  'title':[]
+};
+d3.json("./blockbusters.json").then(function(blockbusters) {
+  console.log(blockbusters)
+  filter = blockbusters.filter( d => d['Main_Genre'] != "N/A" && d['Main_Genre'] != "" && d['Main_Genre'] != "NA");
+  console.log(filter);
+  filter.forEach( (d, i) => {
+    blockbustersData['imdb'].push(Number(d['imdb_rating']));
+    blockbustersData['title'].push((d['title']));
+    blockbustersData['genre'].push((d['Main_Genre']));
+    blockbustersData['year'].push(Number(d['year']));
+    blockbustersData['gross'].push(Number(d['worldwide_gross'].replace(/[$,]/g,"")));
+  });
+  console.log(blockbustersData)
+
+  let svg = d3.select("svg#p1");
+  let margin = { "top": 10, "right": 10, "bottom": 10, "left":10};
+  let chartWidth = 800 - margin.left - margin.right-50;
+  let chartHeight = 500 - margin.top - margin.bottom-50;
+
+  const max_year = d3.max(blockbustersData['year']);
+  const min_year = d3.min(blockbustersData['year']);
+  const year_scale = d3.scaleLinear().domain([min_year+1, max_year+1]).range([0, chartWidth]);
+
+  const max_gross = d3.max(blockbustersData['gross']);
+  const min_gross = d3.min(blockbustersData['gross']);
+  const gross_scale = d3.scaleLog().domain([min_gross, max_gross]).range([chartHeight, 0]);
+
+  const max_imdb = d3.max(blockbustersData['imdb']);
+  const min_imdb = d3.min(blockbustersData['imdb']);
+  const imdb_scale = d3.scaleLog().domain([min_imdb+1, max_imdb+1]).range([3, 13]);
+
+  const region_scale = d3.scaleOrdinal(d3.schemeCategory10);
+  console.log(region_scale)
+
+  let yAxis = d3.axisLeft(gross_scale);
+  svg.append("g")
+    .attr("class", "y axis")
+    .attr("transform","translate("+ (margin.left+25) +","+ (margin.top+10)+")")
+    .call(yAxis);
+  let xAxis = d3.axisBottom(year_scale);
+  svg.append("g")
+  .attr("class", "x axis")
+  .attr("transform","translate("+ (margin.left+25) +","+ (margin.top + 440) +")")
+  .call(xAxis);
+
+  let y_grid = d3.axisLeft(gross_scale).tickSize(-800).tickFormat("");
+    svg.append("g")
+    .attr("transform","translate("+(margin.left+25)+","+(margin.top+10)+")")
+    .style("color","lightgrey")
+    .call(y_grid);
+
+  let x_grid = d3.axisBottom(year_scale).tickSize(-500).tickFormat("");
+    svg.append("g")
+    .attr("transform","translate("+(margin.left+25)+","+(margin.top+440)+")")
+    .style("color","lightgrey")
+    .call(x_grid);
+
+  console.log(blockbustersData['year'].length)
+  let b = [blockbustersData];
+  console.log(b)
+
+  let graph = svg.append("g")
+    .attr("transform","translate("+(margin.left+25)+","+(margin.top+10)+")")
+    .attr("width",800)
+    .attr("height",500);
+
+  for (i = 0; i < 437; i++) {
+
+    let year = blockbustersData['year'][i]
+    let gross = blockbustersData['gross'][i]
+    let imdb = blockbustersData['imdb'][i]
+    let region = blockbustersData['genre'][i];
+    let title = blockbustersData['title'][i]
+
+    let circle = graph.append("circle")
+      .attr("cx", year_scale(year+1))
+      .attr("cy", gross_scale(gross))
+      .attr("r", imdb_scale(imdb+1))
+      .attr("opacity", 0.8)
+      .style("fill",region_scale(region))
+      .attr("genre",region);
+
+    circle.on("mouseover", function() {
+      console.log(d3.select(this));
+      d3.select(this)
+        .transition().duration(200)
+        .attr("r",(imdb_scale(imdb+1)*2))
+        .style("stroke","#000");
+
+      graph.append("text")
+        .attr("id", title.replace(/[ _\-,.:'#!\?&1234567890]/g,"_"))
+        .attr("x", year_scale(year+1) )
+        .attr("y", gross_scale(gross) - 5 )
+        .text(title);
+
+    });
+    circle.on("mouseout", function() {
+    d3.select(this)
+      .transition().duration(200)
+      .attr("r",imdb_scale(imdb+1))
+      .style("stroke","none");
+      d3.select("#" + title.replace(/[ _\-,.:'#!?&1234567890]/g,"_")).remove();
+    });
+}
+});
+</script>
+
+<p>#2.
+</p>
+<svg height="400" width="400" style="border:1px solid #ccc">
+<g id="background" style="stroke: #000; stroke-width: 2px; fill: none;">
+<path d="M75 350 H 140 V 250 H 160 V 350 H 350"/>
+<circle id="pitcher" cx="75" cy="350" r="5" style="fill: #EEF"/>
+<rect id="target" x="200" y="350" width="50" height="10" style="fill: #FDD"/>
+</g> </svg>
+<script>
+x_scale= d3.scaleLinear().domain([0, 35]).range([0,175]);
+y_scale= d3.scaleLinear().domain([0, 40]).range([200, 0]);
+
+
+function trajectory(initialVelocity,initialAngle){
+  let ground = 0
+  let initialxvelocity = trajectory.initialVelocity*((Math.cos(trajectory.initialAngle)*(180/Math.PI)))
+  let initialyvelocity = trajectory.initialVelocity*(Math.sin(trajectory.initialAngle)*(180/Math.PI))
+  const xAccel = 0
+  const yAccel = -.371
+  let initialdata = {ground:y_scale(ground),x:x_scale(0),y:y_scale(0),xVelocity:initialxvelocity,yVelocity:initialyvelocity,
+  xAcceleration:xAccel,yAcceleration:yAccel};
+  var i = 1
+  let dataset = [initialdata]
+  while (y <= ground) {
+    if (dataset.length == 0){
+          dataset.push(initialdata);
+          }
+    else{
+      i++;
+      x = dataset.x[i-1] + .1*(dataset.xVelocity[i]);
+      y = dataset.y[i-1] + .1*(dataset.yVelocity[i]);
+      xVelocity = dataset.xVelocity[i-1] + xAcceleration;
+      yVelocity = dataset.yVelocity[i-1] + yAcceleration;
+      dataset[i].push({ground:y_scale(y),x:x_scale(x),y:y_scale(y),xVelocity:xVelocity,yVelocity:yVelocity,
+      xAcceleration:xAccel,yAcceleration:yAccel});
+}
+  return dataset;
+}
+
+}
+
+function plotTrajectory(array){
+  array = trajectory(initialVelocity,initialAngle)
+  var lines = d3.line()
+  var forpath = lines(array)
+  d3.select('path')
+    .attr('d', pathData)
+    .attr("opacity", 0.25)
+    .attr("stroke-width", 5)
+    .attr("fill", "blue")
+}
+
+let d = trajectory(14,75)
+let display = plotTrajectory(d)
+
+
+
+
+</script>
+
+
+</body>
