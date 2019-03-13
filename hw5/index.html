@@ -86,8 +86,9 @@ used quite regularly to map the United States
   let projection = d3.geoMercator()
     .fitSize([mercator_width, mercator_height],countries);
   let path = d3.geoPath().projection(projection);
-  // mercator_svg.append("path")
-  //   .attr( "d", path(d3.geoGraticule10()));
+  mercator_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path(d3.geoGraticule10()));
   mercator_svg.selectAll("path").data(countries.features)
     .enter()
     .append("path")
@@ -102,8 +103,9 @@ used quite regularly to map the United States
   let projection_equal = d3.geoEqualEarth()
     .fitSize([equal_width, equal_height],countries);
   let path_equal = d3.geoPath().projection(projection_equal);
-  // equal_svg.append("path")
-  //   .attr( "d", path_equal(d3.geoGraticule10()));
+  equal_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path_equal(d3.geoGraticule10()));
   equal_svg.selectAll("path").data(countries.features)
     .enter()
     .append("path")
@@ -118,8 +120,9 @@ used quite regularly to map the United States
   let projection_conic = d3.geoConicEqualArea()
     .fitSize([conic_width, conic_height],countries);
   let path_conic = d3.geoPath().projection(projection_conic);
-  // conic_svg.append("path")
-  //   .attr( "d", path_conic(d3.geoGraticule10()));
+  conic_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path_conic(d3.geoGraticule10()));
   conic_svg.selectAll("path").data(countries.features)
     .enter()
     .append("path")
@@ -153,6 +156,7 @@ used quite regularly to map the United States
     let color_scale = d3.scaleLinear().domain([30,50,70]).range([d3.rgb(255,0,0),d3.rgb(211,211,211),d3.rgb(0,0,255)])
       .clamp(true)
       .interpolate(d3.interpolateHcl);
+    // mapping ny state
     let join = p2_svg.selectAll("path").data(districts.features)
       .enter()
       .append("path")
@@ -161,6 +165,7 @@ used quite regularly to map the United States
       .style("stroke","white")
       .style("stroke-width",1)
       .style("fill",d => color_scale(d.properties.percent_clinton));
+    // finding coordinates
     console.log(projection_p2([-76.5,42.443333]))
     p2_svg.append("circle")
       .attr("cx",268.203317557005)
