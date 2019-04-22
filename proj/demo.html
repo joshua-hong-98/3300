@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+    <head>
+        <meta charset="utf-8" lang="en"/>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="./css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="./css/custom.css"/>
+        <style>
+        </style>
+
+        <!-- Javascript -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://cdn.anychart.com/js/8.0.1/anychart-core.min.js"></script>
+        <script src="https://cdn.anychart.com/js/8.0.1/anychart-pie.min.js"></script>
+        <title>demo</title>
+    </head>
+
+    <body>
+
+        <div class="p-5 pt-4 bg-light">
+            <h1 class="test-grey text-weight-light">Album Ratings vs. Album Sales</h1>
+            <p class="text-muted font-weight-light">Joshua Hong (jh976), Kaushik Ravikumar (kr437)</p>
+
+			<div id="vis1" class="p-4 mt-5">
+				<h4 class="text-secondary"></h4>
+				<p class="font-weight-light"> This visualization depicts the relationship between an album's ratings and how popular it is on Spotify's streaming platform.
+                    The album ratings were performed by Pitchfork and are on a scale from 0 to 10. The popularity score is an integer between 0 to 100 calculated by Spotify
+                    based on the number of streams and the current popularity. The albums included in this visualization were randomly selected ones released between 2016-2017
+                    that were rated by Pitchfork.
+				</p>
+				<!-- Visualization 1-->
+				<div class="flex row p-3 rounded bg-white justify-content-around align-items-center">
+					<svg id="albumChart" width="800" height="500"></svg>
+                </div>
+                <div class="genrelegend" style="width:800px;height:25px;background-color: gray" id="genreLegend" ></div>
+            </div>
+          </div>
+           <div id="pie">
+           </div>
+
+        <script id="albumsScript">
+
+            const svg = d3.select("svg#albumChart");
+            const genreLegend = d3.select("#genreLegend");
+
+            const width = 800;
+            const height = 500;
+
+            const margin = {
+				top: 20,
+				right: 20,
+				bottom: 40,
+				left: 50
+            };
+
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const requestAlbumData = async() => {
+
+                const pitchforkData = await d3.csv("./data/more_filtered_pitchfork_data.csv");
+                const popularityData = await d3.json("./data/popularity_data.json");
+
+                var pitchforkRatingMax = d3.max(pitchforkData, d => parseFloat(d['score']));
+                var pitchforkRatingMin = d3.min(pitchforkData, d => parseFloat(d['score']));
+                var popularityDataMin = d3.min(popularityData, d => d['pop']);
+                var popularityDataMax = d3.max(popularityData, d => d['pop']);
+
+                var clickList = [];
+
+                let pitchforkRatingScale = d3.scaleLinear()
+                                             .domain([Math.floor(pitchforkRatingMin), Math.ceil(pitchforkRatingMax)])
+                                             .range([margin.left, chartWidth + margin.left]);
+                let popularityScale = d3.scaleLinear()
+                                        .domain([popularityDataMin, popularityDataMax])
+                                        .range([margin.top + chartHeight, margin.top]);
+
+                let popularityAxis = d3.axisLeft(popularityScale);
+                let pitchforkRatingAxis = d3.axisBottom(pitchforkRatingScale);
+
+                let xGridlines = d3.axisBottom(pitchforkRatingScale).tickSize(-chartHeight-10).tickFormat("");
+                svg.append("g").attr("class", "x gridlines")
+                .attr("transform","translate("+ 0 +","+ (margin.top + chartHeight) +")")
+                .call(xGridlines);
+
+                let yGridlines = d3.axisLeft(popularityScale).tickSize(-chartWidth-10).tickFormat("");
+                svg.append("g").attr("class", "y gridlines")
+                .attr("transform","translate("+ (margin.left) +","+ (0) +")")
+                .call(yGridlines);
+
+                svg.append("g")
+                    .attr("class", "y axis")
+					.attr("transform", "translate(" + (margin.left) + "," + (0) + ")")
+                    .call(popularityAxis);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+					.attr("transform", "translate(" + (0) + "," + (chartHeight + margin.top) + ")")
+                    .call(pitchforkRatingAxis);
+
+                svg.append("text")
+                    .text("Spotify Popularity")
+                    .attr("x", -1 * (chartHeight / 2 + margin.top))
+                    .attr("y", 20)
+                    .attr("transform", "rotate(-90)")
+                    .attr("font-weight", "bold")
+					.attr("text-anchor", "middle")
+					.attr("fill", "black")
+                    .attr("font-size", "12px");
+
+                svg.append("text")
+                    .text("Pitchfork Rating")
+                    .attr("x", (chartWidth / 2 + margin.left))
+                    .attr("y", (chartHeight + margin.top) + 35)
+					.attr("text-anchor", "middle")
+                    .attr("font-weight", "bold")
+					.attr("fill", "black")
+                    .attr("font-size", "12px");
+
+                function is_genre(fst, genre)
+                {
+                    return fst.toLowerCase().includes(genre.toLowerCase());
+                }
+
+                function isEdm(fst)
+                {
+                    return fst.toLowerCase().includes("edm") || fst.toLowerCase().includes("elec");
+                }
+
+                function isAltIndie(fst)
+                {
+                    return fst.toLowerCase().includes("alt") || fst.toLowerCase().includes("indie");
+                }
+
+                function getMainGenre(lst)
+                {
+                    if(lst.length == 0)
+                    {
+                        console.log("none");
+                        return "other";
+                    }
+                    var fst = lst[0];
+                    if(is_genre(fst, "pop"))
+                    {
+                        return "pop";
+                    }
+                    else if(is_genre(fst, "hip hop"))
+                    {
+                        return "hiphop";
+                    }
+                    else if(is_genre(fst, "rap"))
+                    {
+                        return "rap";
+                    }
+                    else if(is_genre(fst, "r&b"))
+                    {
+                        return "rnb";
+                    }
+                    else if(isEdm(fst))
+                    {
+                        return "edm";
+                    }
+                    else if(isAltIndie(fst))
+                    {
+                        return "alt/indie"
+                    }
+                    else if(is_genre(fst, "rock"))
+                    {
+                        return "rock";
+                    }
+                    else if(is_genre(fst, "ambient"))
+                    {
+                        return "ambient";
+                    }
+                    else if(is_genre(fst, "metal"))
+                    {
+                        return "metal";
+                    }
+                    else if(is_genre(fst, "country"))
+                    {
+                        return "country";
+                    }
+                    else if(is_genre(fst, "jazz"))
+                    {
+                        return "jazz";
+                    }
+                    else
+                    {
+                        console.log(fst);
+                        return "other";
+                    }
+                }
+
+                const genreScale = d3.scaleOrdinal(d3.schemeSet3);
+                console.log(genreScale)
+
+                for(let x = 0; x < pitchforkData.length; x++)
+                {
+                    let genre = getMainGenre(popularityData[x]['genres']);
+                    svg.append("circle")
+                        .attr("cx", pitchforkRatingScale(pitchforkData[x]['score']))
+                        .attr("cy", popularityScale(popularityData[x]['pop']))
+                        .attr("fill", genreScale(genre))
+                        .attr("r", 10)
+                        .attr("genre", genre)
+                        .style("opacity", 0.4);
+                }
+
+
+
+                genreScale.domain().forEach(function(d,i) {
+                genreLegend.append("span")
+                            .text(d)
+                            .attr("class","mouse")
+                            .style("font-size", "16px")
+                            .style("color", genreScale(d))
+                            .on("click", function() {
+                              console.log(i)
+                              if (!clickList.includes(i)) {
+                                this.style.fontSize = "18px";
+                                svg.selectAll("circle").each(function() {
+                                let circle = d3.select(this);
+                                if (circle.attr("genre") === d) {
+                                    circle.style("opacity", 0.8);
+                                    circle.attr("stroke", "black");
+                                }
+                              })
+                              clickList.push(i)
+                              console.log(clickList)
+                            } else {
+                              var index = clickList.indexOf(i);
+                              clickList.splice(index, 1);
+                              this.style.fontSize = "16px";
+                              svg.selectAll("circle").each(function() {
+                              let circle = d3.select(this);
+                              if (circle.attr("genre") === d) {
+                                  circle.style("opacity", 0.4);
+                                  circle.attr("stroke", "none");
+                              }
+                            })
+                            console.log(clickList)
+                            }
+                            })
+                        });
+                        var all = {
+                          other:0,
+                          metal:0,
+                          rnb:0,
+                          ambient:0,
+                          hiphop:0,
+                          country:0,
+                          pop:0,
+                          altindie:0,
+                          edm:0,
+                          rock:0,
+                          jazz:0,
+                          rap:0
+                        }
+                        var dat = []
+                        popularityData.forEach( (d, i) => {
+                          let genre = getMainGenre(popularityData[i]['genres']);
+                          if (genre == "other"){
+                            all["other"]++
+                          }
+                          else if (genre == "metal"){
+                            all['metal']++
+                          }
+                          else if (genre == "rnb"){
+                            all['rnb']++
+                          }
+                          else if (genre == "ambient"){
+                            all['ambient']++
+                          }
+                          else if (genre == "hiphop"){
+                            all['hiphop']++
+                          }
+                          else if (genre == "country"){
+                            all['country']++
+                          }
+                          else if (genre == "pop"){
+                            all['pop']++
+                          }
+                          else if (genre == "alt/indie"){
+                            all['altindie']++
+                          }
+                          else if (genre == "edm"){
+                            all['edm']++
+                          }
+                          else if (genre == "rock"){
+                            all['rock']++
+                          }
+                          else if (genre == "jazz"){
+                            all['jazz']++
+                          }
+                          else{
+                            all['rap']++
+                          }
+                        });
+
+                        console.log(all)
+                        // anychart.onDocumentReady(function() {
+                        //
+                        //   // set the data
+                        //   var data = [
+                        //       {x: "other", value: 403},
+                        //       {x: "metal", value: 26},
+                        //       {x: "rnb", value: 36},
+                        //       {x: "ambient", value: 29},
+                        //       {x: "hiphop", value: 77},
+                        //       {x: "country", value: 5},
+                        //       {x: "pop", value: 120},
+                        //       {x: "alt/indie", value: 186},
+                        //       {x: "edm", value: 15},
+                        //       {x: "rock", value: 51},
+                        //       {x: "jazz", value: 12},
+                        //       {x: "rap", value: 26}
+                        //   ];
+                        //
+                        //   // create the chart
+                        //   var chart = anychart.pie();
+                        //
+                        //   // set the chart title
+                        //   // chart.title("Population by Race for the United States: 2010 Census");
+                        //
+                        //   // add the data
+                        //   chart.data(data);
+                        //
+                        //   // display the chart in the container
+                        //   chart.container('container');
+                        //   chart.draw();
+                        //
+                        // });
+                        var radius = Math.min(width, height) / 2 - 40
+                        var svg2 = d3.select("#pie")
+                        .append("svg")
+                          .attr("width", 800)
+                          .attr("height", 500)
+                          .append("g")
+                          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                        var dummycolor = d3.scaleOrdinal()
+                          .domain(all)
+                          .range(d3.schemeSet2);
+                        var pie = d3.pie()
+                          .value(function(d) {return d.value; })
+                        var data_ready = pie(d3.entries(all))
+                        var arcGenerator = d3.arc()
+                          .innerRadius(0)
+                          .outerRadius(radius)
+                        svg2.selectAll('slices')
+                          .data(data_ready)
+                          .enter()
+                          .append('path')
+                          .attr('d', arcGenerator)
+                          .attr('fill', function(d){ return(dummycolor(d.key)) })
+                          .attr("stroke", "black")
+                          .style("stroke-width", "2px")
+                          .style("opacity", 0.7)
+                        svg2.selectAll('slices')
+                          .data(data_ready)
+                          .enter()
+                          .append('text')
+                          .text(function(d,i){ return Object.keys(all)[i]})
+                          .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+                          .style("text-anchor", "middle")
+                          .style("font-size", 17)
+
+            };
+            requestAlbumData();
+
+
+        </script>
+
+    </body>
+
+</html>

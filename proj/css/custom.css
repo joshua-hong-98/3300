@@ -1,0 +1,12 @@
+body{
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.genrelegend span {
+    margin-left: 20px;
+  }
+
+.mouse:hover {
+  cursor: pointer;
+}
