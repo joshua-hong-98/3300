@@ -84,10 +84,10 @@ const requestData = async () => {
       .id(d => d.icpsr))
     .force("repulse", d3.forceManyBody().strength(-60))
     .force("y", d3.forceY(height/2).strength(.1))
-    .force("x", d3.forceX(function(d){
-      if(d.party == "Dem"){
+    .force("x", d3.forceX(function(data){
+      if(data.party == "Dem"){
         return (width*.25)
-      }else if(d.party == "Rep"){
+      }else if(data.party == "Rep"){
         return (width*.75)
       }
       else{
