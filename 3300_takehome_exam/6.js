@@ -5,6 +5,7 @@ let canvas = document.querySelector("#colorscale");
 let context = canvas.getContext("2d");
 let image = context.getImageData(0, 0, 500, 40);
 let pixels = image.data;
+
 function scalecol(){
   for (let y = 0; y < canvas.height; y++) {
         for (let x = 0; x < canvas.width; x++) {
@@ -17,4 +18,5 @@ function scalecol(){
       }
 context.putImageData(image, 0, 0);
 };
+
 scalecol();
