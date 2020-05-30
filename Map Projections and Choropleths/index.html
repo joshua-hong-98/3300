@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+  <title> 3300 Hw5 </title>
+  <meta charset="utf-8"/>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/topojson.v2.min.js"></script>
+  <style>
+  .country{
+    fill: lightgrey;
+    stroke: none;
+  }
+  .outline{
+    stroke:black;
+    fill:none;
+    stroke-width:1px;
+  }
+  .graticule{
+    fill:none;
+    stroke:lightgrey;
+  }
+  </style>
+</head>
+<body>
+  <h2>3300 HW5</h2>
+  <!-- use firefox -->
+
+  <p>
+  Name: Joshua Hong <br>
+  NetID: jh976 <br>
+  Date: 3/12/2019
+  </p>
+  <p>
+    #1.
+  </p>
+  <svg id="mercator" height="400px" width="600px"></svg>
+  <svg id="equalEarth" height="400px" width="600px"></svg>
+  <svg id= "conicEqualArea" height="400px" width="600px"></svg>
+<p id = "D">
+a)An advantage of the Mercator projection is that it simplifies the view of the
+world making it easy for identifying directions and locations<br>
+b)A disadvantage of the Mercator projection its scaling of objects, as it can be seen
+Antarctica and Greenland, especially, are distorted to seem much larger than they actually are <br>
+c)The Mercator projection would be useful for navigation, more specifically marine navigation
+</p>
+<p id = "E">
+a)An advantage of the Equal Earth projection is that the areas on the projection are
+most acurately depicted (in the proportional sense) and minimizes distortion<br>
+b)A disadvantage of the Equal Earth projection that in order to keep the relative size
+and area accurate the shapes of the continents suffer <br>
+c)The Equal Earth projection, due to its exceptional accuracy in projecting areas,
+would be useful for actual depiction of the earth, possibly for a 3D or 2D model, as many
+have already considered this to be the best projection for its depiction of relative size
+</p>
+<p id = "F">
+a)An advantage of the Conic Equal projection is that its purpose is to depict
+all areas on earth proportional to the ones on the projection<br>
+b)A disadvantage of the Conic Equal projection is that it has distortions on the
+top and bottom parts of the projection because the proportionally equal area projection is kept
+only within the two standard parallel lines, and the scaling for the distances can
+apparently be distorted as well <br>
+c) The Conic Equal projection would be most useful for mapping smaller regions-- it is actually
+used quite regularly to map the United States
+</p>
+  <script>
+  const svg = d3.select("#mercator");
+  const mercator_width = 600 - 50;
+  const mercator_height = 400 - 50;
+  const mercator_svg = svg.append("g")
+                  .attr("transform","translate("+25+","+25+")");
+  const svg2 = d3.select("#equalEarth");
+  const equal_width = 600 - 50;
+  const equal_height = 400 - 50;
+  const equal_svg = svg2.append("g")
+                  .attr("transform","translate("+25+","+25+")");
+  const svg3 = d3.select("#conicEqualArea");
+  const conic_width = 600 - 50;
+  const conic_height = 400 - 50;
+  const conic_svg = svg3.append("g")
+                  .attr("transform","translate("+25+","+25+")");
+  let world = d3.json("world_110m.json").then(function(world) {
+  console.log(world)
+    // mercator
+  let countries= topojson.feature(world, world.objects.countries);
+  let countriesMesh = topojson.mesh(world, world.objects.countries);
+  let projection = d3.geoMercator()
+    .fitSize([mercator_width, mercator_height],countries);
+  let path = d3.geoPath().projection(projection);
+  mercator_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path(d3.geoGraticule10()));
+  mercator_svg.selectAll("path").data(countries.features)
+    .enter()
+    .append("path")
+    .attr("class","country")
+    .attr("d", path);
+  mercator_svg.append("path")
+    .datum(countriesMesh)
+    .attr("class","outline")
+    .attr("d", path);
+
+    // equalearth
+  let projection_equal = d3.geoEqualEarth()
+    .fitSize([equal_width, equal_height],countries);
+  let path_equal = d3.geoPath().projection(projection_equal);
+  equal_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path_equal(d3.geoGraticule10()));
+  equal_svg.selectAll("path").data(countries.features)
+    .enter()
+    .append("path")
+    .attr("class","country")
+    .attr("d", path_equal);
+  equal_svg.append("path")
+    .datum(countriesMesh)
+    .attr("class","outline")
+    .attr("d", path_equal);
+
+    //conicEqualArea
+  let projection_conic = d3.geoConicEqualArea()
+    .fitSize([conic_width, conic_height],countries);
+  let path_conic = d3.geoPath().projection(projection_conic);
+  conic_svg.append("path")
+    .attr( "class", "graticule" )
+    .attr( "d", path_conic(d3.geoGraticule10()));
+  conic_svg.selectAll("path").data(countries.features)
+    .enter()
+    .append("path")
+    .attr("class","country")
+    .attr("d", path_conic);
+  conic_svg.append("path")
+    .datum(countriesMesh)
+    .attr("class","outline")
+    .attr("d", path_conic);
+  });
+  </script>
+
+<p>
+  #2.
+</p>
+<svg id="p2" height="800px" width="700px"> </svg>
+<script>
+  const svg_p2 = d3.select("#p2");
+  const p2_width = 700 - 50;
+  const p2_height = 800 - 50;
+  const p2_svg = svg_p2.append("g")
+                  .attr("transform","translate("+25+","+25+")");
+
+  let nyd = d3.json("new_york_districts.json").then(function(nyd) {
+    console.log(nyd)
+
+    let districts= topojson.feature(nyd, nyd.objects.districts);
+    let projection_p2 = d3.geoMercator()
+      .fitSize([p2_width, p2_height],districts);
+    let path_p2 = d3.geoPath().projection(projection_p2);
+    let color_scale = d3.scaleLinear().domain([30,50,70]).range([d3.rgb(255,0,0),d3.rgb(211,211,211),d3.rgb(0,0,255)])
+      .clamp(true)
+      .interpolate(d3.interpolateHcl);
+    // mapping ny state
+    let join = p2_svg.selectAll("path").data(districts.features)
+      .enter()
+      .append("path")
+      .attr("class","district")
+      .attr("d", path_p2)
+      .style("stroke","white")
+      .style("stroke-width",1)
+      .style("fill",d => color_scale(d.properties.percent_clinton));
+    // finding coordinates
+    console.log(projection_p2([-76.5,42.443333]))
+    p2_svg.append("circle")
+      .attr("cx",268.203317557005)
+      .attr("cy",414.53998659720764)
+      .attr("r",10)
+      .style("fill","white");
+  });
+</script>
+
+</body>

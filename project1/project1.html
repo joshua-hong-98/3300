@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <title> 3300 Project1 </title>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../project1/style.css">
+</head>
+<h1>Common Guitar Notes and Chord Progressions in Top Songs Between 1950-1990</h1>
+
+<p>
+  How do musicians choose the chors they use in their songs? Are there specific notes that appeal to musicians more than
+  others? We will be uncovering the trends in the kinds of notes, chords,
+  and chord progressions used in popular hit songs between the 1950s and 1990s (specifically 1958 and 1991). To
+  accomplish this, we will be analyzing the harmonic data provided in the McGill
+  University Billboard Dataset. In this dataset, researchers professionally tagged chords for over 800 pop/rock songs
+  that made the Billboard Hot 100 list between the timeframe listed.
+  <br>
+</p>
+
+<h2> Introduction to the Guitar Chord</h2>
+<div id="guitarEx"></div>
+<p>Chords are the very foundation of guitar playing.<br><br>
+  So what is a chord, exactly?<br><br>
+  A chord, at its simplest, is a combination of three or more different notes sounded together. That's it. Above, you
+  see the three notes used to make an A Major Chord: C#, A, and E. Notice
+  how all three notes are different. The base A chord is denoted by the first three notes you see on the left. However,
+  you can alter the sound of chords by
+  changing octaves. The other five A Major Chords you see on the fretboard above are achieved by altering the octave.
+  <br><br>Now that we've got a fundamental definition of a chord, let's analyze the frequency of specific notes in
+  popular songs between 1950-1990. By breaking down the base chord used in the
+  songs, we can determine which notes are used to achieve the chord.
+</p>
+<h2> Note Frequency Color Scale</h2>
+<p>
+  < 1000        1000+ 1500+ 2000+ 2500+ 3000+ </p> </div> <div id="guitar1"><div id="scale"></div>
+    </div>
+    <h2> Most Common Chord Progressions</h2>
+    <div id="graph"></div>
+    <script>
+      let guitarEx = d3.select("#guitarEx").append("svg").attr("width", 1050).attr("height", 400);
+      let guitar = d3.select("#guitar1").append("svg").attr("width", 1050).attr("height", 400);
+      let scale = d3.select("#scale").append("svg").attr("width", 1050).attr("height", 100);
+      var stringAll = ["F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E",
+        "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+        "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G",
+        "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D",
+        "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A",
+        "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E"];
+      var label = ["< 1000", "1000-1500", "1500-2000","2000-2500","2500-3000","3000+"];
+      var stringAllLength = stringAll.length;
+
+      var f = 0;
+      var c = 0;
+      var gsharp = 0;
+      var dsharp = 0;
+      var asharp = 0;
+      var fsharp = 0;
+      var csharp = 0;
+      var a = 0;
+      var e = 0;
+      var b = 0;
+      var g = 0;
+      var d = 0;
+
+      // Makes fretbaord
+      guitar.append("rect")
+        .attr("y", 50)
+        .attr("width", "1000")
+        .attr("height", "300")
+        .style("fill", "#A4793A")
+      guitarEx.append("rect")
+        .attr("y", 50)
+        .attr("width", "1000")
+        .attr("height", "300")
+        .style("fill", "#A4793A")
+
+      const strings = d3.scaleLinear().domain([0, 5]).range([10, 290]);
+      const frets = d3.scaleLinear().domain([0, 12]).range([80, 990]);
+      const circles = d3.scaleLinear().domain([0, 12]).range([80, 990]);
+      const colors = d3.interpolateRgb("lightgrey", "#840000");
+      var visdata = { 'number': [], 'first': [], 'second': [], 'third': [], 'fourth': [], 'fifth': [] };
+
+      d3.csv("../project1/guitar.csv").then(function (data) {
+        data = data.filter(d => d['chord'] != 'N');
+        console.log(data)
+        data.forEach((d, i) => {
+          visdata['number'].push(Number(d['n']));
+          visdata['first'].push((d['1']));
+          visdata['second'].push((d['2']));
+          visdata['third'].push(d['3']);
+          visdata['fourth'].push(d['4']);
+          visdata['fifth'].push(d['5']);
+
+        });
+        var numarray = visdata['number'];
+        var first = visdata['first'];
+        var second = visdata['second'];
+        var third = visdata['third'];
+        var fourth = visdata['fourth'];
+        var fifth = visdata['fifth'];
+        console.log(visdata);
+        //counting frequency of each note
+        for (i = 0; i <= numarray.length; i++) {
+          //F
+          if (first[i] == 'F' || second[i] == 'F' || third[i] == 'F' || fourth[i] == 'F' || fifth[i] == 'F') {
+            f = f + numarray[i];
+          }
+          //C
+          if (first[i] == 'C' || second[i] == 'C' || third[i] == 'C' || fourth[i] == 'C' || fifth[i] == 'C') {
+            c = c + numarray[i];
+          }
+          //G sharp
+          if (first[i] == 'G#' || second[i] == 'G#' || third[i] == 'G#' || fourth[i] == 'G#' || fifth[i] == 'G#') {
+            gsharp = gsharp + numarray[i];
+          }
+          //D sharp
+          if (first[i] == 'D#' || second[i] == 'D#' || third[i] == 'D#' || fourth[i] == 'D#' || fifth[i] == 'D#') {
+            dsharp = dsharp + numarray[i];
+          }
+          //a sharp
+          if (first[i] == 'A#' || second[i] == 'A#' || third[i] == 'A#' || fourth[i] == 'A#' || fifth[i] == 'A#') {
+            asharp = asharp + numarray[i];
+          }
+          //fsharp
+          if (first[i] == 'F#' || second[i] == 'F#' || third[i] == 'F#' || fourth[i] == 'F#' || fifth[i] == 'F#') {
+            fsharp = fsharp + numarray[i];
+          }
+          //csharp
+          if (first[i] == 'C#' || second[i] == 'C#' || third[i] == 'C#' || fourth[i] == 'C#' || fifth[i] == 'C#') {
+            csharp = csharp + numarray[i];
+          }
+          //a
+          if (first[i] == 'A' || second[i] == 'A' || third[i] == 'A' || fourth[i] == 'A' || fifth[i] == 'A') {
+            a = a + numarray[i];
+          }
+          //e
+          if (first[i] == 'E' || second[i] == 'E' || third[i] == 'E' || fourth[i] == 'E' || fifth[i] == 'E') {
+            e = e + numarray[i];
+          }
+          //b
+          if (first[i] == 'B' || second[i] == 'B' || third[i] == 'B' || fourth[i] == 'B' || fifth[i] == 'B') {
+            b = b + numarray[i];
+          }
+          //g
+          if (first[i] == 'G' || second[i] == 'G' || third[i] == 'G' || fourth[i] == 'G' || fifth[i] == 'G') {
+            g = g + numarray[i];
+          }
+          //d
+          if (first[i] == 'D' || second[i] == 'D' || third[i] == 'D' || fourth[i] == 'D' || fifth[i] == 'D') {
+            d = d + numarray[i];
+          }
+
+
+        }
+        var string1 = [f, fsharp, g, gsharp, a, asharp, b, c, csharp, d, dsharp, e];
+        var string2 = [c, csharp, d, dsharp, e, f, fsharp, g, gsharp, a, asharp, b];
+        var string3 = [gsharp, a, asharp, b, c, csharp, d, dsharp, e, f, fsharp, g];
+        var string4 = [dsharp, e, f, fsharp, g, gsharp, a, asharp, b, c, csharp, d];
+        var string5 = [asharp, b, c, csharp, d, dsharp, e, f, fsharp, g, gsharp, a];
+        var string6 = [f, fsharp, g, gsharp, a, asharp, b, c, csharp, d, dsharp, e];
+        var stringLength = string1.length;
+        console.log(string1);
+
+        // frequency
+        for (i = 0; i < stringLength; i++) {
+          if (string1[i] < 1000) {
+            string1[i] = 0;
+          }
+          else if (string1[i] > 1000 && string1[i] < 1500) {
+            string1[i] = .2;
+          }
+          else if (string1[i] > 1500 && string1[i] < 2000) {
+            string1[i] = .4;
+          }
+          else if (string1[i] > 2000 && string1[i] < 2500) {
+            string1[i] = .6;
+          }
+          else if (string1[i] > 2500 && string1[i] < 3000) {
+            string1[i] = .8;
+          }
+          else {
+            string1[i] = 1.0;
+          }
+        }
+        for (i = 0; i < stringLength; i++) {
+          if (string2[i] < 1000) {
+            string2[i] = 0;
+          }
+          else if (string2[i] > 1000 && string2[i] < 1500) {
+            string2[i] = .2;
+          }
+          else if (string2[i] > 1500 && string2[i] < 2000) {
+            string2[i] = .4;
+          }
+          else if (string2[i] > 2000 && string2[i] < 2500) {
+            string2[i] = .6;
+          }
+          else if (string2[i] > 2500 && string2[i] < 3000) {
+            string2[i] = .8;
+          }
+          else {
+            string2[i] = 1.0;
+          }
+        }
+        for (i = 0; i < stringLength; i++) {
+          if (string3[i] < 1000) {
+            string3[i] = 0;
+          }
+          else if (string3[i] > 1000 && string3[i] < 1500) {
+            string3[i] = .2;
+          }
+          else if (string3[i] > 1500 && string3[i] < 2000) {
+            string3[i] = .4;
+          }
+          else if (string3[i] > 2000 && string3[i] < 2500) {
+            string3[i] = .6;
+          }
+          else if (string3[i] > 2500 && string3[i] < 3000) {
+            string3[i] = .8;
+          }
+          else {
+            string3[i] = 1.0;
+          }
+        }
+        for (i = 0; i < stringLength; i++) {
+          if (string4[i] < 1000) {
+            string4[i] = 0;
+          }
+          else if (string4[i] > 1000 && string4[i] < 1500) {
+            string4[i] = .2;
+          }
+          else if (string4[i] > 1500 && string4[i] < 2000) {
+            string4[i] = .4;
+          }
+          else if (string4[i] > 2000 && string4[i] < 2500) {
+            string4[i] = .6;
+          }
+          else if (string4[i] > 2500 && string4[i] < 3000) {
+            string4[i] = .8;
+          }
+          else {
+            string4[i] = 1.0;
+          }
+        }
+        for (i = 0; i < stringLength; i++) {
+          if (string5[i] < 1000) {
+            string5[i] = 0;
+          }
+          else if (string5[i] > 1000 && string5[i] < 1500) {
+            string5[i] = .2;
+          }
+          else if (string5[i] > 1500 && string5[i] < 2000) {
+            string5[i] = .4;
+          }
+          else if (string5[i] > 2000 && string5[i] < 2500) {
+            string5[i] = .6;
+          }
+          else if (string5[i] > 2500 && string5[i] < 3000) {
+            string5[i] = .8;
+          }
+          else {
+            string5[i] = 1.0;
+          }
+        }
+        for (i = 0; i < stringLength; i++) {
+          if (string6[i] < 1000) {
+            string6[i] = 0;
+          }
+          else if (string6[i] > 1000 && string6[i] < 1500) {
+            string6[i] = .2;
+          }
+          else if (string6[i] > 1500 && string6[i] < 2000) {
+            string6[i] = .4;
+          }
+          else if (string6[i] > 2000 && string6[i] < 2500) {
+            string6[i] = .6;
+          }
+          else if (string6[i] > 2500 && string6[i] < 3000) {
+            string6[i] = .8;
+          }
+          else {
+            string6[i] = 1.0;
+          }
+        }
+
+
+
+        console.log(string1)
+
+        for (i = 0; i <= 11; i++) {
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 60)
+            .attr("r", 20)
+            .style("fill", colors(string1[i]))
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 115)
+            .attr("r", 20)
+            .style("fill", colors(string2[i]))
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 170)
+            .attr("r", 20)
+            .style("fill", colors(string3[i]))
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 230)
+            .attr("r", 20)
+            .style("fill", colors(string4[i]))
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 285)
+            .attr("r", 20)
+            .style("fill", colors(string5[i]))
+          guitar.append("circle")
+            .attr("cx", circles(i) + 75)
+            .attr("cy", 340)
+            .attr("r", 20)
+            .style("fill", colors(string6[i]))
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 4 || i === 8 || i === 11) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 60)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 60)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 1 || i === 4 || i === 9) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 115)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 115)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 1 || i === 5 || i === 8) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 170)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 170)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 1 || i === 6 || i === 10) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 230)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 230)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 3 || i === 6 || i === 11) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 285)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 285)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+        for (i = 0; i <= 11; i++) {
+          if (i === 4 || i === 8 || i === 11) {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 340)
+              .attr("r", 20)
+              .style("fill", "black")
+          }
+          else {
+            guitarEx.append("circle")
+              .attr("cx", circles(i) + 75)
+              .attr("cy", 340)
+              .attr("r", 20)
+              .style("fill", "black")
+              .style("opacity", "0.3")
+          }
+        }
+
+        // Label notes
+        for (i = 0; i <= stringAllLength; i++) {
+          guitar.append("text")
+            .text(stringAll[i])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "65")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitar.append("text")
+            .text(stringAll[i + 12])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "120")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitar.append("text")
+            .text(stringAll[i + 24])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "175")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitar.append("text")
+            .text(stringAll[i + 36])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "235")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitar.append("text")
+            .text(stringAll[i + 48])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "290")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitar.append("text")
+            .text(stringAll[i + 60])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "345")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "65")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i + 12])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "120")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i + 24])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "175")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i + 36])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "235")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i + 48])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "290")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+          guitarEx.append("text")
+            .text(stringAll[i + 60])
+            .attr("font-size", "15px")
+            .attr("x", frets(i + 1))
+            .attr("y", "345")
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+        }
+      });
+
+      let graph_data = { "frequency": [], "chords": [] };
+      d3.csv("../project1/progression.csv").then(function (data) {
+        console.log(data)
+        data.forEach((d, i) => {
+          graph_data["frequency"].push(Number(d["n"]))
+          graph_data["chords"].push((d["chords"]))
+        });
+        // graph_data = graph_data.filter(d => d['chords'] === "");
+
+        let graph = d3.select("#graph").append("svg").attr("width", 1100).attr("height", 700).attr("align", "center");
+        let margin = { "top": 10, "right": 10, "bottom": 10, "left": 10 };
+        let chartWidth = 1000 - margin.left - margin.right - 50;
+        let chartHeight = 700 - margin.top - margin.bottom - 50;
+        let chord_data = graph_data["chords"];
+        let freq_data = graph_data["frequency"];
+        const max_freq = d3.max(graph_data['frequency']);
+        const min_freq = d3.min(graph_data['frequency']);
+        // console.log(min_freq)
+        const freq_scale = d3.scaleLinear().domain([min_freq - 30, max_freq]).range([chartHeight, 0]);
+        console.log(chord_data)
+        console.log("here")
+        // top 10
+        const x_scale = d3.scaleBand().domain(chord_data).range([0, chartWidth]);
+        console.log(freq_data)
+
+        let yAxis = d3.axisLeft(freq_scale);
+        graph.append("g")
+          .attr("class", "y axis")
+          .attr("transform", "translate(" + (margin.left + 50) + ")")
+          .call(yAxis);
+        let xAxis = d3.axisBottom(x_scale);
+        graph.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(" + (margin.left + 50) + "," + (margin.top + 620) + ")")
+          .call(xAxis);
+
+        for (i = 0; i <= 9; i++) {
+          graph.append("rect")
+            .attr("height", 630 - freq_scale(freq_data[i]))
+            .attr("width", x_scale.bandwidth())
+            .style("fill", "#919191")
+            .style("stroke", "white")
+            .attr("x", 63 + 93 * i)
+            .attr("y", freq_scale(freq_data[i]))
+        }
+
+      });
+
+      for (i = 0; i <= 5; i++) {
+        guitar.append("line")
+          .attr("stroke-width", 3)
+          .style("stroke", "#c8bb93")
+          .attr("x1", 0)
+          .attr("x2", 1000)
+          .attr("y1", strings(i) + 50)
+          .attr("y2", strings(i) + 50)
+        guitarEx.append("line")
+          .attr("stroke-width", 3)
+          .style("stroke", "#c8bb93")
+          .attr("x1", 0)
+          .attr("x2", 1000)
+          .attr("y1", strings(i) + 50)
+          .attr("y2", strings(i) + 50)
+      }
+      for (i = 0; i <= 12; i++) {
+        guitar.append("line")
+          .attr("stroke-width", 3)
+          .style("stroke", "#d7d6d6")
+          .attr("y1", 50)
+          .attr("y2", 350)
+          .attr("x1", frets(i))
+          .attr("x2", frets(i))
+        guitarEx.append("line")
+          .attr("stroke-width", 3)
+          .style("stroke", "#d7d6d6")
+          .attr("y1", 50)
+          .attr("y2", 350)
+          .attr("x1", frets(i))
+          .attr("x2", frets(i))
+      }
+      guitar.append("rect")
+        .attr("width", "80")
+        .attr("height", "300")
+        .style("fill", "black")
+        .attr("y", 50)
+      guitarEx.append("rect")
+        .attr("width", "80")
+        .attr("height", "300")
+        .style("fill", "black")
+        .attr("y", 50)
+
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M232 120 V220")
+        .style("fill", "none")
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M459 60 V115 L550 180")
+        .style("fill", "none")
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M380 280 L450 335 L620 280")
+        .style("fill", "none")
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M760 175 L610 225 L760 335")
+        .style("fill", "none")
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M760 60 L840 115 L1000 60")
+        .style("fill", "none")
+      guitarEx.append("path")
+        .attr("stroke-width", 5)
+        .style("stroke", "#002aff")
+        .attr("d", "M990 350 V290 L910 230")
+        .style("fill", "none")
+      for (i = 0; i <= 500; i += 100) {
+        scale.append("rect")
+          .attr("width", "30")
+          .attr("height", "30")
+          .attr("x", i + 250)
+          .style("fill", colors(i * .002))
+          .style("margin-top","10")
+      }
+
+
+    </script>
+
+</html>
