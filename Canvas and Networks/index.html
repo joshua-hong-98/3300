@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+  <title> 3300 Hw7 </title>
+  <meta charset="utf-8"/>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+  <h2>3300 HW7</h2>
+  <p>
+  Name: Joshua Hong <br>
+  NetID: jh976 <br>
+  Date: 4/23/2019
+  </p>
+  <!-- reference: class lectures -->
+  <p>
+    #1.
+  </p>
+  <p>
+    <canvas width="320px" height="320px" class="model"></canvas>
+    <div>
+     <span>Color Range</span>
+     <input type="range" min="0" max="150" step="1" id="slider">
+     <span id="label"></span>
+   </div>
+  </p>
+<script>
+  var lum_text = 75;
+  let canvas = document.querySelector("canvas.model");
+  let d_context = canvas.getContext("2d");
+  let image = d_context.getImageData(0, 0, canvas.width, canvas.height);
+  let pixels = image.data;
+  const a_scale = d3.scaleLinear().domain([0,canvas.width]).range([-160,160])
+  const b_scale = d3.scaleLinear().domain([0,canvas.height]).range([-160,160])
+
+  function rgbAtLocation(lum,x,y){
+    var x = a_scale(x);
+    var y = b_scale(y);
+    var lab = d3.lab(lum,x, y);
+    var convert = lab.rgb();
+    return convert
+  };
+
+  function fillCanvas(lum){
+    for (let y = 0; y < canvas.height; y++) {
+       for (let x = 0; x < canvas.width; x++) {
+        pixels[4*(y*320 + x)+0] = rgbAtLocation(lum, x, y).r;
+        pixels[4*(y*320 + x)+1] = rgbAtLocation(lum, x, y).g;
+        pixels[4*(y*320 + x)+2] = rgbAtLocation(lum, x, y).b;
+        pixels[4*(y*320 + x)+3] = 255;
+     }
+   }
+      d_context.putImageData(image, 0, 0);
+ };
+d3.select("#label").text(lum_text);
+var slider = d3.select("#slider")
+    .on("input", function () {
+      d3.select("#label").text(this.value);
+      lum = this.value
+      fillCanvas(lum)
+       });
+fillCanvas(75);
+</script>
+
+<p>
+  #2.
+</p>
+<p>
+<svg id="p2" height="400px" width="800px"></svg>
+</p>
+<script>
+const requestData = async () => {
+  const height = 400;
+  const width = 800;
+  const svg = d3.select("#p2");
+  const svg_g = svg.append("g");
+  const edges = await d3.csv("../senate.109.rollcall.edges.csv");
+  const nodes = await d3.csv("../senate.109.rollcall.nodes.csv");
+  let color_scale = d3.scaleOrdinal().domain(["Dem","Ind","Rep"]).range([d3.rgb(255,0,0),d3.rgb(255,255,0),d3.rgb(0,0,255)]);
+  var sim = d3.forceSimulation()
+    .nodes(nodes)
+    .force("links", d3.forceLink()
+      .links(edges)
+      .id(d => d.icpsr))
+    .force("repulse", d3.forceManyBody().strength(-60))
+    .force("y", d3.forceY(height/2).strength(.1))
+    .force("x", d3.forceX(function(data){
+      if(data.party == "Dem"){
+        return (width*.25)
+      }else if(data.party == "Rep"){
+        return (width*.75)
+      }
+      else{
+        return (width*.5)
+      }
+    })
+    .strength(.1))
+    .on("tick", render);
+  function render(){
+    let lines = svg.selectAll("line.link").data(edges)
+      lines.enter().append("line").attr("class","link")
+           .attr("stroke","black")
+           .attr("opacity",1)
+           .merge(lines)
+           .attr("x1", d => d.source.x).attr("x2", d => d.target.x)
+           .attr("y1", d => d.source.y).attr("y2", d => d.target.y);
+   let circles = svg.selectAll("circle.node").data(nodes);
+     circles.enter()
+            .append("circle")
+            .attr("class","node")
+            .attr("fill", d => color_scale(d.party))
+            .attr("stroke", "black")
+            .attr("r", 6)
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .merge(circles)
+            .attr("transform", d => "translate("+d.x+","+d.y+")");
+  }
+  render();
+};
+
+requestData();
+
+</script>
+</body>
