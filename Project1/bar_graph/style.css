@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400");
+* {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+body {
+    background: #eee;
+    font-family: "Source Sans Pro", sans-serif;
+    letter-spacing: 0.05em;
+}
+h1 {
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 40px;
+}
+p{
+    margin:20px 200px 20px 200px;
+    font-size: 18px;
+}
+h2{
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.labels p{
+  text-align:center;
+  /* margin-left:500px; */
+  margin-right:270px;
+  white-space: pre;
+}
+#guitar1 {
+    width: 100%;
+    text-align: center;
+  }
+
+#graph{
+  text-align:center;
+}
