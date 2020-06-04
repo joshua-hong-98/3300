@@ -1,2 +1,2 @@
-# 3300
-Class projects from INFO3300 and some class work
+# Data Visualizations
+Most of the Data Visualizations were done as class projects (Class number can be identified by parantheses) 
